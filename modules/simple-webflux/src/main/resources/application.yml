@@ -1,0 +1,14 @@
+spring:
+  security:
+    user:
+      name: john
+      password: passwd
+      roles: user
+
+management:
+  server:
+    port: 8081
+
+logging:
+  level:
+    org.springframework.web: trace
