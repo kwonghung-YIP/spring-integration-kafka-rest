@@ -4,6 +4,13 @@ curl -v -X POST \
   --compressed --http2 \
   --user john:passwd \
   --header "Content-Type: application/json" \
+  --data '{"id":"d155a1e0-b6ab-11ed-afa1-0242ac120002","firstName":"Johnny","lastName":"Doe","email":"johnny.doe@gmail.com"}' \
+  localhost:8080/api/customer
+  
+curl -v -X POST \
+  --compressed --http2 \
+  --user john:passwd \
+  --header "Content-Type: application/json" \
   --data '{"id":"d155a1e0-b6ab-11ed-afa1-0242ac120002","firstName":"John","lastName":"Doe","email":"john.doe@gmail.com"}' \
   localhost:8080/api/customer
 
