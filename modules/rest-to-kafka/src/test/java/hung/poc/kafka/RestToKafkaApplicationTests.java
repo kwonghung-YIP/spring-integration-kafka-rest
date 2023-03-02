@@ -3,7 +3,7 @@ package hung.poc.kafka;
 import hung.poc.kafka.pojo.Customer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -12,7 +12,11 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-@WebFluxTest
+@SpringBootTest
+@AutoConfigureWebTestClient
+//@WebFluxTest
+//@SpringIntegrationTest
+//@Import({WebFluxSecConfig.class, InboundAdapterConfig.class})
 class RestToKafkaApplicationTests {
     @Autowired
     private WebTestClient webClient;
@@ -22,7 +26,7 @@ class RestToKafkaApplicationTests {
     void requestMappingTest() {
         Customer customer = new Customer();
         customer.setId(UUID.randomUUID());
-        customer.setEmail("john.doe@gmail.com");
+        customer.setEmail("johnny.ng@gmail.com");
         customer.setFirstName("John");
         customer.setLastName("Doe");
 
