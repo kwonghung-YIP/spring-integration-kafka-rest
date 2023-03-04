@@ -1,0 +1,33 @@
+spring:
+  cloud:
+    stream:
+      function:
+        bindings:
+          uppercase-in-0: input
+          uppercase-out-0: output
+
+      bindings:
+        input:
+          destination: uppercase-input
+          group: simple-producer
+        output:
+          destination: uppercase-output
+          group: simple-producer
+          producer:
+            partition-count: 6
+
+      kafka:
+        binder:
+          auto-add-partitions: true
+          #transaction:
+          #  transaction-id-prefix: tx-
+
+        bindings:
+          input:
+            consumer:
+              enable-dlq: true
+              dlq-name: counter
+
+
+
+
