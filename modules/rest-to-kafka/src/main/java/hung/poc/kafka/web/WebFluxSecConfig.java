@@ -16,6 +16,8 @@ public class WebFluxSecConfig {
                    .authorizeExchange(ex ->
                       ex.pathMatchers(HttpMethod.GET,"/actuator/**").permitAll()
                         .pathMatchers(HttpMethod.POST,"/api/customer").hasRole("user")
+                        .pathMatchers(HttpMethod.POST,"/api/uppercase").hasRole("user")
+                        .pathMatchers(HttpMethod.GET,"/api/ticker").permitAll()
                         .anyExchange().authenticated())
 //                           ex.anyExchange().permitAll())
                    .httpBasic().and()

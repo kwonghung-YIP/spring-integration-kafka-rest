@@ -1,4 +1,19 @@
+```bash
+curl -v -X POST \
+  --compressed --http2 \
+  --user john:passwd \
+  --header "Content-Type: text/plain" \
+  --data 'peter pan' \
+  localhost:8080/api/uppercase
+```
+
+```bash
+docker compose \
+  -f kafka-cluster.yaml up -d
+```
+
 For testing the SimpleWebflux
+
 ```bash
 curl -v -X POST \
   --compressed --http2 \
@@ -39,3 +54,9 @@ curl -v -X GET \
 
 ### 3. Spring Boot Testing
 * [Reflectoring.io - Testing with Spring Boot and @SpringBootTest](https://reflectoring.io/spring-boot-test/)
+
+### 4. Jmeter 
+* [Jmeter Plugin Manager](https://jmeter-plugins.org/wiki/PluginsManager/)
+* [Jmeter Generate Random Value](https://hkrtrainings.com/jmeter-random-string#Jmeter)
+* [Jmeter variable to lowercase](https://stackoverflow.com/questions/4755286/in-jmeter-and-beanshell-how-can-i-make-a-variable-lowercase)
+* 
