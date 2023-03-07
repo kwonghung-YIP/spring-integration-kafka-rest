@@ -11,6 +11,6 @@ management:
 
 logging:
   level:
-    org.springframework.web: trace
-    org.springframework.security: trace
-    io.netty: trace
+    org.springframework.web: debug
+    org.springframework.security: debug
+    #io.netty: trace

@@ -5,6 +5,13 @@ curl -v -X POST \
   --header "Content-Type: text/plain" \
   --data 'peter pan' \
   localhost:8080/api/uppercase
+
+curl -v -X POST \
+  --compressed --http2 \
+  --user john:passwd \
+  --header "Content-Type: text/plain" \
+  --data 'aapl' \
+  localhost:8080/api/ticker
 ```
 
 ```bash
@@ -59,4 +66,8 @@ curl -v -X GET \
 * [Jmeter Plugin Manager](https://jmeter-plugins.org/wiki/PluginsManager/)
 * [Jmeter Generate Random Value](https://hkrtrainings.com/jmeter-random-string#Jmeter)
 * [Jmeter variable to lowercase](https://stackoverflow.com/questions/4755286/in-jmeter-and-beanshell-how-can-i-make-a-variable-lowercase)
-* 
+
+### FasterXML Jackson2 JSON Annotations
+* [Project GitHub - Jackson Annotation](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
+* [Tutorialspoint - Jackson Annotation](https://www.tutorialspoint.com/jackson_annotations/jackson_annotations_jsonsetter.htm)
+

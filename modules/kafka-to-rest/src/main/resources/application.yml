@@ -1,0 +1,14 @@
+spring:
+  main:
+    web-application-type: none
+
+  kafka:
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  config:
+    import: polygon-apikey.yml
+
+management:
+  server:
+    port: 8081
