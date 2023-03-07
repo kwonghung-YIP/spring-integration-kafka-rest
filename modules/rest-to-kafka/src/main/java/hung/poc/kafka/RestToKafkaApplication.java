@@ -24,12 +24,12 @@ public class RestToKafkaApplication {
         SpringApplication.run(RestToKafkaApplication.class, args);
     }
 
-    @Bean
+    //@Bean
     public ApplicationRunner simpleWebClient() {
         return (argv) -> {
             WebClient webclient = WebClient.builder()
                     .baseUrl("https://api.polygon.io")
-                    .defaultHeader(HttpHeaders.AUTHORIZATION,"Bearer tb6J2v5XVQTPxCPAGQBplfnYuNJwiCJy")
+                    .defaultHeader(HttpHeaders.AUTHORIZATION,"Bearer <token-here>")
                     .build();
 
             webclient.get().uri(uriBuilder ->
