@@ -1,3 +1,4 @@
 /spring-integration-kafka-rest.iml
 /.idea/
 /modules/kafka-to-rest/src/main/resources/polygon-apikey.yml
+/modules/simple-webclient/src/main/resources/polygon.io-apikey.yml

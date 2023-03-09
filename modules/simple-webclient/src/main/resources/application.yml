@@ -1,0 +1,9 @@
+spring:
+  main:
+    web-application-type: none
+  config:
+    import: polygon.io-apikey.yml
+
+logging:
+  level:
+    org.springframework.web: debug

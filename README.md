@@ -67,7 +67,13 @@ curl -v -X GET \
 * [Jmeter Generate Random Value](https://hkrtrainings.com/jmeter-random-string#Jmeter)
 * [Jmeter variable to lowercase](https://stackoverflow.com/questions/4755286/in-jmeter-and-beanshell-how-can-i-make-a-variable-lowercase)
 
-### FasterXML Jackson2 JSON Annotations
+### 5. FasterXML Jackson2 JSON Annotations
 * [Project GitHub - Jackson Annotation](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
 * [Tutorialspoint - Jackson Annotation](https://www.tutorialspoint.com/jackson_annotations/jackson_annotations_jsonsetter.htm)
 
+### 6. Enterprise Integration Patterns
+* [Enterprise Integration Patterns](https://www.enterpriseintegrationpatterns.com/patterns/messaging/)
+
+### Utilities Library
+* [MapStruct - Java Bean Mapper](https://mapstruct.org/)
+* [Redoc - Generate OpenAPI Doc](https://github.com/Redocly/redoc)
