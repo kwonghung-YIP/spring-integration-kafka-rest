@@ -21,7 +21,9 @@ import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 public class UppercaseGatewayConfig {
 
     @Bean
-    public IntegrationFlow restUppercaseFlow() {
+    public IntegrationFlow restUppercaseFlow(
+            ReplyingKafkaTemplate<String,String,String> kafkaTemplate
+    ) {
         return IntegrationFlow
                 .from(WebFlux.inboundGateway("/api/uppercase")
                         .requestMapping(mapping -> mapping.methods(HttpMethod.POST).consumes(MediaType.TEXT_PLAIN_VALUE))
@@ -29,7 +31,7 @@ public class UppercaseGatewayConfig {
                         .replyChannel("kafka-out"))
                 .log()
                 //.handle(String.class, (p,h) -> "~"+p.toUpperCase()+"~")
-                .handle(Kafka.outboundGateway(replyTemplate(null)))
+                .handle(Kafka.outboundGateway(kafkaTemplate))
                 .log()
                 .channel("kafka-out")
                 .get();
@@ -37,9 +39,10 @@ public class UppercaseGatewayConfig {
 
     @Bean
     public ReplyingKafkaTemplate<String,String,String> replyTemplate(
-            ProducerFactory<String,String> factory
+            ProducerFactory<String,String> factory,
+            KafkaMessageListenerContainer replyContainer
     ) {
-        ReplyingKafkaTemplate replyTemplate = new ReplyingKafkaTemplate<>(factory,replyContainer(null));
+        ReplyingKafkaTemplate replyTemplate = new ReplyingKafkaTemplate<>(factory,replyContainer);
         replyTemplate.setDefaultTopic("uppercase-input");
         return replyTemplate;
     }

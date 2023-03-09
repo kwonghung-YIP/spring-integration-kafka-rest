@@ -19,6 +19,7 @@ import org.springframework.integration.kafka.inbound.KafkaMessageDrivenChannelAd
 import org.springframework.integration.webflux.dsl.WebFlux;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -70,7 +71,8 @@ public class PolygonIOFlow {
 
     @Bean(name = "polygon-gw-ticker-info-reply")
     public MessageChannel getTickerInfoReply() {
-        return MessageChannels.direct("polygon-gw-ticker-info-reply").get();
+        //return MessageChannels.direct("polygon-gw-ticker-info-reply").get();
+        return MessageChannels.publishSubscribe("polygon-gw-ticker-info-reply").ignoreFailures(true).get();
     }
 
     @Bean

@@ -5,7 +5,6 @@ import hung.poc.kafka.pojo.CustomerValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,27 +24,27 @@ public class InboundAdapterConfig {
     @Bean
     public IntegrationFlow createCustomerFlow() {
         return IntegrationFlow.from(
-                    WebFlux.inboundChannelAdapter("/api/customer")
-                           .requestMapping(mapping -> mapping.methods(HttpMethod.POST).consumes(MediaType.APPLICATION_JSON_VALUE))
-                           .requestPayloadType(Customer.class)
-                           .validator(new CustomerValidator(beanValidator()))
-                           .statusCodeFunction(respEntity -> HttpStatus.CREATED)
-               )
-               .transform(Message.class, msg -> {
-                   MessageHeaders headers = msg.getHeaders();
-                   Authentication auth = headers.get("http_userPrincipal", Authentication.class);
-                   Customer payload = (Customer)msg.getPayload();
-                   payload.setCreatedBy(auth.getName());
-                   return MessageBuilder.withPayload(payload).build();
-               })
-               .channel("to-kafka")
-               .log()
-               .get();
+                        WebFlux.inboundChannelAdapter("/api/customer")
+                                .requestMapping(mapping -> mapping.methods(HttpMethod.POST).consumes(MediaType.APPLICATION_JSON_VALUE))
+                                .requestPayloadType(Customer.class)
+                                .validator(new CustomerValidator(beanValidator()))
+                                .statusCodeFunction(respEntity -> HttpStatus.CREATED)
+                )
+                .transform(Message.class, msg -> {
+                    MessageHeaders headers = msg.getHeaders();
+                    Authentication auth = headers.get("http_userPrincipal", Authentication.class);
+                    Customer payload = (Customer) msg.getPayload();
+                    payload.setCreatedBy(auth.getName());
+                    return MessageBuilder.withPayload(payload).build();
+                })
+                .channel("to-kafka")
+                .log()
+                .get();
     }
 
     @ServiceActivator(inputChannel = "to-kafka")
     public void viewCustomer(Message<Customer> msg) {
-        log.info("Customer: {}",msg);
+        log.info("Customer: {}", msg);
     }
 
     @Bean
