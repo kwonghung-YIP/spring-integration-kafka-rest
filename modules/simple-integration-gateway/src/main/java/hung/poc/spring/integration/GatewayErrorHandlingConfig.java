@@ -1,11 +1,11 @@
 package hung.poc.spring.integration;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.Gateway;
@@ -16,11 +16,10 @@ import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.handler.advice.RequestHandlerCircuitBreakerAdvice;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHandlingException;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @Slf4j
 @Configuration
@@ -32,8 +31,8 @@ public class GatewayErrorHandlingConfig {
         return (argv) -> {
             for (int i=0;i<10;i++) {
                 try {
-                    String name = gateway.getTickerName("AAPL");
-                    log.info("Ticker Name: {}", name);
+                    Optional<TickerInfo> info = gateway.getTickerInfo("AAPL");
+                    log.info("Ticker Name: {}", info);
                 } catch (Exception e) {
                     log.error("caught exception", e);
                 }
@@ -45,11 +44,12 @@ public class GatewayErrorHandlingConfig {
         return IntegrationFlow
                 .fromSupplier(() -> "AAPL", s -> s.poller(Pollers.fixedDelay(Duration.ofMillis(500))))
                 .log()
-                //.gateway("gw-request-channel")
-                //.handle(name -> {log.info("{}",name);})
-                .handle("simpleGateway","getTickerName")
-                //.log()
-                .handle(name -> {log.info("Print name: {}",name);})
+                .handle("simpleGateway","getTickerInfo")
+                .log()
+                .handle(m -> {
+                    Optional<TickerInfo> payload = (Optional<TickerInfo>)m.getPayload();
+                    log.info("Print name: {}",payload.map(info -> info.getName()).orElse("Ticker Not Found"));
+                })
                 .get();
     }
 
@@ -65,40 +65,49 @@ public class GatewayErrorHandlingConfig {
         return f -> f.log();
     }
 
-    @MessagingGateway(name = "simpleGateway")//, errorChannel = "gw-error-channel")
+    @MessagingGateway(name = "simpleGateway", errorChannel = "gw-error-channel")
     static public interface SimpleGateway {
 
         @Gateway(requestChannel = "gw-request-channel", replyChannel = "gw-reply-channel", replyTimeout = 2000)
-        public String getTickerName(String ticker) throws TickerNotFoundException;
+        public Optional<TickerInfo> getTickerInfo(String ticker) throws TickerNotFoundException;
 
+    }
+
+    @Bean
+    public IntegrationFlow gatewayErrorFlow() {
+        return IntegrationFlow.from("gw-error-channel")
+                .routeByException(r -> r
+                        .subFlowMapping(TickerNotFoundException.class,f -> f.transform(e -> Optional.empty()))
+                        .defaultOutputToParentFlow())
+                .get();
     }
 
     @Service
     static public class TickerService {
 
         @ServiceActivator(inputChannel = "gw-request-channel", outputChannel = "gw-reply-channel", adviceChain = {"circuitBreakerAdvice"})
-        public String getTickerName(String ticker) throws TickerNotFoundException {
-            if (Math.random()>0.7) {
+        public Optional<TickerInfo> getTickerInfo(String ticker) throws TickerNotFoundException {
+            if (Math.random()>0.5) {
                 throw new TickerNotFoundException(ticker);
             } else {
-                return "Apple Inc.";
+                return Optional.of(new TickerInfo(ticker,"Apple Inc."));
             }
         }
 
-        //@ServiceActivator(inputChannel = "gw-reply-channel")
-        public void anotherHandler(String name) {
-            log.info("Another handler {}",name);
+        @ServiceActivator(inputChannel = "gw-reply-channel")
+        public void anotherHandler(Optional<TickerInfo> info) {
+            log.info("Another handler {}",info);
         }
 
-        @ServiceActivator(inputChannel = "gw-error-channel")
-        public String handleException(MessageHandlingException e) {
-            log.error("Error logged from error channel",e);
-            if (e.getCause() instanceof TickerNotFoundException) {
-                return "Name Not Found";
-            } else {
-                throw e;
-            }
-        }
+//        @ServiceActivator(inputChannel = "gw-error-channel")
+//        public String handleException(MessageHandlingException e) {
+//            log.error("Error logged from error channel",e);
+//            if (e.getCause() instanceof TickerNotFoundException) {
+//                return "Name Not Found";
+//            } else {
+//                throw e;
+//            }
+//        }
     }
 
     @Bean
@@ -118,6 +127,13 @@ public class GatewayErrorHandlingConfig {
 //                        .build());
 //        return advice;
 //    }
+
+    @Data
+    @AllArgsConstructor
+    static public class TickerInfo {
+        private String ticker;
+        private String name;
+    }
 
     @Data
     @RequiredArgsConstructor
